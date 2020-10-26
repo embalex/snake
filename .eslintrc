@@ -1,0 +1,82 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint", "react", "jsx-a11y", "import", "simple-import-sort"],
+  "extends": ["airbnb", "airbnb/hooks", "plugin:@typescript-eslint/recommended"],
+  "overrides": [
+    {
+      "files": ["*.translations.ts"],
+      "rules": {
+        "@typescript-eslint/camelcase": "off"
+      }
+    }
+  ],
+  "rules": {
+    "indent": ["error", 4, { "SwitchCase": 1, "ignoredNodes": ["TemplateLiteral > *"] }],
+    "max-len": ["error" , 120],
+    "max-classes-per-file": "off",
+    "no-use-before-define": "off",
+    "no-multiple-empty-lines": "off",
+    "@typescript-eslint/interface-name-prefix": [
+      "off"
+    ],
+    "import/prefer-default-export": "off",
+    "import/newline-after-import": ["error", { "count": 2 }],
+    "import/no-default-export": "error",
+    "import/no-extraneous-dependencies": [ "error", {
+      "devDependencies": [
+        "**/*.test.ts",
+        "**/*.test.tsx",
+        "**/*.story.tsx",
+        "./helpers/*"
+      ]
+    }],
+    "simple-import-sort/sort": [
+      "error",
+      {
+        "groups": [
+          // React, other packages
+          ["^react", "^@?\\w"],
+          // Absolute imports
+          ["^(src|helpers)(/.*|$)"],
+          // Relative imports, then side effect imports
+          ["^\\.", "^\\u0000"],
+        ],
+      }
+    ],
+    "import/extensions": [
+      "error", {
+        "extensions": [".ts", ".tsx"]
+      }
+    ],
+    "sort-imports": "off",
+    "import/order": "off",
+    "react/prop-types": ["off"],
+    "react/jsx-filename-extension": "off",
+    "react/jsx-indent": ["error", 4, { "checkAttributes": true, "indentLogicalExpressions": true }],
+    "react/jsx-indent-props": ["error", 4],
+    "react/jsx-props-no-spreading": "off",
+    "lines-between-class-members": ["error", "always", { "exceptAfterSingleLine": true }],
+    "no-multi-spaces": ["error", { "ignoreEOLComments": true }],
+    "@typescript-eslint/naming-convention": [
+      "error",
+      { "selector": "enumMember", "format": ["PascalCase"] }
+    ],
+    "no-unused-expressions": "off"
+  },
+  "settings": {
+    "import/resolver": {
+      "alias": {
+        "map": [
+          ["src", "./src"],
+          ["helpers/jest", "./helpers/jest"],
+          ["helpers/storybook", "./helpers/storybook"],
+          ["helpers/types", "./helpers/types"]
+        ],
+        "extensions": [".ts", ".tsx"]
+      }
+    }
+  },
+  "env": {
+    "browser": true
+  }
+}

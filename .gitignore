@@ -1,0 +1,10 @@
+build/
+node_modules/
+coverage/
+.idea
+.vscode
+.tsbuildinfo
+.rpt2_cache
+.DS_Store
+.project
+.out
