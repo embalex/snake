@@ -1,19 +1,26 @@
 import React from 'react';
+import { useLoader } from 'react-three-fiber';
 import { RepeatWrapping, TextureLoader } from 'three';
 
+import { FIELD_SIZE } from '../constants';
+import { degToRad } from '../utils';
+// eslint-disable-next-line import/no-unresolved
 import grass from './grass.jpg';
 
 
 export const Ground = () => {
-    const texture = new TextureLoader().load(grass);
-    texture.wrapS = RepeatWrapping;
-    texture.wrapT = RepeatWrapping;
-    texture.repeat.set(240, 240);
+    const loadedTexture = useLoader(TextureLoader, grass);
+    loadedTexture.wrapS = RepeatWrapping;
+    loadedTexture.wrapT = RepeatWrapping;
+    loadedTexture.repeat.set(FIELD_SIZE, FIELD_SIZE);
 
     return (
-        <mesh receiveShadow>
-            <planeBufferGeometry attach="geometry" args={[1000, 1000]} />
-            <meshStandartMaterial map={texture} attach="material" color="green" />
+        <mesh>
+            <boxBufferGeometry
+                attach="geometry"
+                args={[FIELD_SIZE, FIELD_SIZE, 1]}
+            />
+            <meshStandardMaterial attach="material" color="green" map={loadedTexture} />
         </mesh>
     );
 };
