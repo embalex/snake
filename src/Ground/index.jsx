@@ -19,6 +19,7 @@ export const Ground = () => {
             <boxBufferGeometry
                 attach="geometry"
                 args={[FIELD_SIZE, FIELD_SIZE, 1]}
+                // args={[1, 1, 1]}
             />
             <meshStandardMaterial attach="material" color="green" map={loadedTexture} />
         </mesh>
