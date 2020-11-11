@@ -7,7 +7,7 @@ import { createEmptyAnimationConfig } from './utils';
 
 
 export const Apple: React.FC<IModel> = ({ position }) => {
-    const duckyModelScene = useModel(
+    const appleModelScene = useModel(
         '/models/apple/scene.gltf',
         createEmptyAnimationConfig(),
     );
@@ -16,7 +16,7 @@ export const Apple: React.FC<IModel> = ({ position }) => {
         <group position={[...position, 0]} dispose={null}>
             <mesh>
                 <primitive
-                    object={duckyModelScene}
+                    object={appleModelScene}
                     rotation={[degToRad(90), 0, 0]}
                     position={[0, 0, 0.8]}
                     scale={[0.00015, 0.00015, 0.00015]}

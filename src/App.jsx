@@ -7,6 +7,7 @@ import { Vector3 } from 'three';
 import { Physics } from 'use-cannon';
 
 import { Camera, CameraHelper } from './camera';
+import { FIELD_SIZE } from './constants';
 import { Ground } from './Ground';
 import { Model } from './model';
 
@@ -22,16 +23,16 @@ export const App = () => {
                 rotation={[Math.PI / 2, 0, 0]}
             />
             <ambientLight intensity={1} />
-            <pointLight position={[40, 40, 40]} />
+            <Sky sunPosition={new Vector3(100, 10, 100)} />
             <Suspense fallback={null}>
                 <Ground />
                 <axesHelper />
-                <Model.Magmacube position={[0, -3]} cubeNumber={3} />
-                <Model.Magmacube position={[0, -2]} cubeNumber={2} />
-                <Model.Magmacube position={[0, -1]} cubeNumber={1} />
-                <Model.Magmacube position={[0, 0]} cubeNumber={0} />
-                <Model.Ducky position={[0, 1]} />
-                <Model.Apple position={[2, 2]} />
+                <Model.Magmacube position={[0, -3]} cubeNumber={3} angle={0} />
+                <Model.Magmacube position={[0, -2]} cubeNumber={2} angle={0} />
+                <Model.Magmacube position={[0, -1]} cubeNumber={1} angle={0} />
+                <Model.Magmacube position={[0, 0]} cubeNumber={0} angle={0} />
+                <Model.Ducky position={[0, 1]} angle={0} />
+                <Model.Apple position={[2, 2]} angle={0} />
             </Suspense>
         </Canvas>
     );

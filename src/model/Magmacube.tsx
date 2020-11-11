@@ -11,14 +11,17 @@ interface IProps {
 }
 
 const CUBE_ANIMATION_BASE_TIME_S = 0.1;
-export const Magmacube: React.FC<IModel & IProps> = ({ position, cubeNumber = 0 }) => {
+export const Magmacube: React.FC<IModel & IProps> = ({ position, cubeNumber = 0, angle }) => {
     const magmacubeModelScene = useModel(
         '/models/magmacube/scene.gltf',
         createAnimationConfig(0, 1, cubeNumber * CUBE_ANIMATION_BASE_TIME_S),
     );
 
     return (
-        <group position={[...position, 0]}>
+        <group
+            position={[...position, 0]}
+            rotation={[0, 0, angle]}
+        >
             <primitive
                 object={magmacubeModelScene}
                 rotation={[degToRad(90), degToRad(180), 0]}

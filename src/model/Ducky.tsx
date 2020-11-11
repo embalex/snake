@@ -6,14 +6,18 @@ import { useModel } from './useModel';
 import { createAnimationConfig } from './utils';
 
 
-export const Ducky: React.FC<IModel> = ({ position }) => {
+export const Ducky: React.FC<IModel> = ({ position, angle }) => {
     const duckyModelScene = useModel(
         '/models/ducky/scene.gltf',
         createAnimationConfig(0, 4),
     );
 
     return (
-        <group position={[...position, 0]} dispose={null}>
+        <group
+            position={[...position, 0]}
+            dispose={null}
+            rotation={[0, 0, angle]}
+        >
             <mesh>
                 <primitive
                     object={duckyModelScene}
