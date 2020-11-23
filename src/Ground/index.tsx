@@ -1,10 +1,9 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useLoader } from 'react-three-fiber';
 import { RepeatWrapping, TextureLoader } from 'three';
 
 import { FIELD_SIZE } from '../constants';
 import { Model } from '../model';
-import { degToRad } from '../utils';
 import { getBushesPositions, getRandomPositions } from './utils';
 
 
@@ -12,11 +11,13 @@ const PLANET_SIZE = 50 * FIELD_SIZE;
 const PALMS_AMOUNT = 60;
 const BIG_TREES_AMOUNT = 60;
 const BUSHES_AMOUNT = 1000;
-export const Ground: React.FC = () => {
+const StuffComponent: React.FC = () => {
     const loadedTexture = useLoader(TextureLoader, '/textures/grass.jpg');
-    loadedTexture.wrapS = RepeatWrapping;
-    loadedTexture.wrapT = RepeatWrapping;
-    loadedTexture.repeat.set(PLANET_SIZE, PLANET_SIZE);
+    useEffect(() => {
+        loadedTexture.wrapS = RepeatWrapping;
+        loadedTexture.wrapT = RepeatWrapping;
+        loadedTexture.repeat.set(PLANET_SIZE, PLANET_SIZE);
+    }, [loadedTexture]);
 
     const palmsPositions = useMemo(() => getRandomPositions(PALMS_AMOUNT, PLANET_SIZE, FIELD_SIZE), []);
     const bigTreesPositions = useMemo(() => getRandomPositions(BIG_TREES_AMOUNT, PLANET_SIZE, FIELD_SIZE), []);
@@ -46,3 +47,5 @@ export const Ground: React.FC = () => {
         </>
     );
 };
+
+export const Ground = React.memo(StuffComponent);

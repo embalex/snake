@@ -61,7 +61,9 @@
       "error",
       { "selector": "enumMember", "format": ["PascalCase"] }
     ],
-    "no-unused-expressions": "off"
+    "no-unused-expressions": "off",
+    "no-shadow": "off",
+    "@typescript-eslint/no-shadow": ["error"]
   },
   "settings": {
     "import/resolver": {

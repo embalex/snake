@@ -1,10 +1,10 @@
-interface ITreePosition {
+interface IRandomPosition {
     x: number;
     y: number;
     angle: number;
 }
 
-export const getRandomPositions = (amount: number, worldSize: number, freeFieldSize: number): ITreePosition[] => (
+export const getRandomPositions = (amount: number, worldSize: number, freeFieldSize: number): IRandomPosition[] => (
     new Array(amount).fill(0).map(() => {
         const getRandomCoordinates = () => ([
             Math.floor((Math.random() - 0.5) * worldSize),
@@ -26,37 +26,38 @@ export const getRandomPositions = (amount: number, worldSize: number, freeFieldS
                 angle: Math.floor(Math.random() * 4) * (Math.PI / 2),
             }
         );
-    }).filter((value): value is ITreePosition => Boolean(value))
+    }).filter((value): value is IRandomPosition => Boolean(value))
 );
 
 
 const DIVIDER = 8;
-export const getBushesPositions = (amount: number, worldSize: number, freeFieldSize: number): ITreePosition[] => {
+export const getBushesPositions = (amount: number, worldSize: number, freeFieldSize: number): IRandomPosition[] => {
     const sideArraySize = Math.floor((2 * freeFieldSize) / DIVIDER);
     const randomBushesAmount = amount > sideArraySize * 4
         ? amount - sideArraySize * 4
         : 0;
+    const bushesOffset = freeFieldSize / 2 + 5;
     return [
         ...new Array(sideArraySize).fill(0).map((_, index) => ({
-            x: -freeFieldSize + index * DIVIDER,
-            y: -freeFieldSize,
+            x: -bushesOffset + index * DIVIDER,
+            y: -bushesOffset,
             angle: Math.random() * Math.PI * 2,
         })),
         ...new Array(sideArraySize).fill(0).map((_, index) => ({
-            x: -freeFieldSize + index * DIVIDER,
-            y: freeFieldSize,
+            x: -bushesOffset + index * DIVIDER,
+            y: bushesOffset,
             angle: Math.random() * Math.PI * 2,
         })),
         ...new Array(sideArraySize).fill(0).map((_, index) => ({
-            x: freeFieldSize,
-            y: -freeFieldSize + index * DIVIDER,
+            x: bushesOffset,
+            y: -bushesOffset + index * DIVIDER,
             angle: Math.random() * Math.PI * 2,
         })),
         ...new Array(sideArraySize).fill(0).map((_, index) => ({
-            x: -freeFieldSize,
-            y: -freeFieldSize + index * DIVIDER,
+            x: -bushesOffset,
+            y: -bushesOffset + index * DIVIDER,
             angle: Math.random() * Math.PI * 2,
         })),
-        ...getRandomPositions(randomBushesAmount, worldSize, freeFieldSize + 1),
+        ...getRandomPositions(randomBushesAmount, worldSize, bushesOffset + 1),
     ];
 };

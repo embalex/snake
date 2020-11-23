@@ -1,19 +1,22 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useRef } from 'react';
 import { Canvas } from 'react-three-fiber';
 import { PolarGridHelper } from 'react-three-fiber/components';
 import { Sky } from 'drei';
 import { Vector3 } from 'three';
-// eslint-disable-next-line import/no-unresolved
-import { Physics } from 'use-cannon';
 
-import { Camera, CameraHelper } from './camera';
+import { Camera } from './camera';
 import { FIELD_SIZE } from './constants';
+import { useGameLogic } from './gameLogic';
 import { Ground } from './Ground';
 import { Model } from './model';
+import { Snake } from './Snake';
 
 
 export const App = () => {
-    const a = 1;
+    const snakeRef = useRef(null);
+    useGameLogic(snakeRef);
+
+    const halfFieldSize = FIELD_SIZE / 2;
 
     return (
         <Canvas color="red">
@@ -26,13 +29,11 @@ export const App = () => {
             <Sky sunPosition={new Vector3(100, 10, 100)} />
             <Suspense fallback={null}>
                 <Ground />
-                <axesHelper />
-                <Model.Magmacube position={[0, -3]} cubeNumber={3} angle={0} />
-                <Model.Magmacube position={[0, -2]} cubeNumber={2} angle={0} />
-                <Model.Magmacube position={[0, -1]} cubeNumber={1} angle={0} />
-                <Model.Magmacube position={[0, 0]} cubeNumber={0} angle={0} />
-                <Model.Ducky position={[0, 1]} angle={0} />
-                <Model.Apple position={[2, 2]} angle={0} />
+                <Snake ref={snakeRef} magmacubes={[]} />
+                <Model.Apple position={[-halfFieldSize, -halfFieldSize]} />
+                <Model.Apple position={[-halfFieldSize, halfFieldSize]} />
+                <Model.Apple position={[halfFieldSize, -halfFieldSize]} />
+                <Model.Apple position={[halfFieldSize, halfFieldSize]} />
             </Suspense>
         </Canvas>
     );
