@@ -6,7 +6,7 @@ import { useModel } from './useModel';
 import { createAnimationConfig } from './utils';
 
 
-export const Ducky = React.forwardRef<React.ReactNode, IModel>(({ position, angle }, ref) => {
+export const Ducky: React.FC<IModel> = ({ position, angle, name }) => {
     const duckyModelScene = useModel(
         '/models/ducky/scene.gltf',
         createAnimationConfig(0, 4),
@@ -14,7 +14,7 @@ export const Ducky = React.forwardRef<React.ReactNode, IModel>(({ position, angl
 
     return (
         <group
-            ref={ref}
+            name={name}
             position={[...position, 0]}
             dispose={null}
             rotation={[0, 0, angle]}
@@ -29,4 +29,4 @@ export const Ducky = React.forwardRef<React.ReactNode, IModel>(({ position, angl
             </mesh>
         </group>
     );
-});
+};

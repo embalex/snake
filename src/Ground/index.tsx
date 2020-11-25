@@ -11,7 +11,8 @@ const PLANET_SIZE = 50 * FIELD_SIZE;
 const PALMS_AMOUNT = 60;
 const BIG_TREES_AMOUNT = 60;
 const BUSHES_AMOUNT = 1000;
-const StuffComponent: React.FC = () => {
+
+export const Ground: React.FC = () => {
     const loadedTexture = useLoader(TextureLoader, '/textures/grass.jpg');
     useEffect(() => {
         loadedTexture.wrapS = RepeatWrapping;
@@ -47,5 +48,3 @@ const StuffComponent: React.FC = () => {
         </>
     );
 };
-
-export const Ground = React.memo(StuffComponent);

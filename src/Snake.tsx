@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { NAME } from './constants';
 import { Model } from './model';
 
 
@@ -17,9 +18,7 @@ interface IProps {
 export const Snake = React.forwardRef<React.ReactNode, IProps>(({ head, magmacubes }, snakeRef) => (
     <>
         <Model.Ducky
-            ref={snakeRef}
-            // position={[head.x, head.y]}
-            // angle={head.angle}
+            name={NAME.Ducky}
             position={[0, 0]}
             angle={0}
         />
@@ -28,6 +27,7 @@ export const Snake = React.forwardRef<React.ReactNode, IProps>(({ head, magmacub
             <Model.Magmacube
                 /* eslint-disable-next-line react/no-array-index-key */
                 key={index}
+                name={`${NAME.createMagmacubeName(index)}`}
                 position={[x, y]}
                 cubeNumber={index}
                 angle={angle}

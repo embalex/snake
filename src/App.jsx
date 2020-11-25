@@ -9,12 +9,13 @@ import { FIELD_SIZE } from './constants';
 import { useGameLogic } from './gameLogic';
 import { Ground } from './Ground';
 import { Model } from './model';
+import { SceneHelperComponent } from './sceneHelper';
 import { Snake } from './Snake';
 
 
 export const App = () => {
-    const snakeRef = useRef(null);
-    useGameLogic(snakeRef);
+    const sceneRef = useRef(null);
+    useGameLogic(sceneRef);
 
     const halfFieldSize = FIELD_SIZE / 2;
 
@@ -29,11 +30,12 @@ export const App = () => {
             <Sky sunPosition={new Vector3(100, 10, 100)} />
             <Suspense fallback={null}>
                 <Ground />
-                <Snake ref={snakeRef} magmacubes={[]} />
+                <Snake magmacubes={[]} />
                 <Model.Apple position={[-halfFieldSize, -halfFieldSize]} />
                 <Model.Apple position={[-halfFieldSize, halfFieldSize]} />
                 <Model.Apple position={[halfFieldSize, -halfFieldSize]} />
                 <Model.Apple position={[halfFieldSize, halfFieldSize]} />
+                <SceneHelperComponent ref={sceneRef} />
             </Suspense>
         </Canvas>
     );

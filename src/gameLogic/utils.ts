@@ -1,4 +1,7 @@
+import { Object3D } from 'three';
+
 import { FIELD_SIZE } from '../constants';
+import { degToRad } from '../utils';
 import { IPosition, MoveDirectionEnum } from './types';
 
 
@@ -36,7 +39,7 @@ export const getDirectionByKey = (key: string): MoveDirectionEnum | undefined =>
 );
 
 
-export const makeStep = (position: IPosition, newDirection: MoveDirectionEnum): IPosition => {
+export const calculateNewPosition = (position: IPosition, newDirection: MoveDirectionEnum): IPosition => {
     switch (newDirection) {
         case MoveDirectionEnum.Down:
             return {
@@ -65,4 +68,12 @@ export const makeStep = (position: IPosition, newDirection: MoveDirectionEnum): 
         default:
             throw new Error(`GameLogicUtils. makeStep. Unknown newDirection type = ${newDirection}`);
     }
+};
+
+export const setNewPosition = (model: Object3D, position: IPosition): void => {
+    const { x, y } = toGlobal({ x: position.x, y: position.y });
+    const angle = degToRad(position.angle);
+    model.position.setX(x);
+    model.position.setY(y);
+    model.rotation.set(0, 0, angle);
 };

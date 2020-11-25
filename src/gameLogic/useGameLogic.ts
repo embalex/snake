@@ -1,8 +1,10 @@
 import React, { MutableRefObject, useEffect, useRef } from 'react';
+import { Scene } from 'three';
 
-import { DUCK_START_POSITION, START_TIMER_INTERVAL } from '../constants';
+import { DUCK_START_POSITION, NAME, START_TIMER_INTERVAL } from '../constants';
+import { sceneHelperUtil } from '../sceneHelper';
 import { IPosition, ISnake, MoveDirectionEnum } from './types';
-import { getDirectionByKey, makeStep, toGlobal } from './utils';
+import { calculateNewPosition, getDirectionByKey, setNewPosition } from './utils';
 
 
 // Here we use local (playground) coordinates. And in the end local coordinates is converted to global.
@@ -22,19 +24,14 @@ import { getDirectionByKey, makeStep, toGlobal } from './utils';
 */
 
 
-type ISnakeRef = MutableRefObject<React.ReactNode>
+type ISceneRef = MutableRefObject<Scene>
 
 interface IUseGameLogicReturn {
     onKeyPress: React.KeyboardEventHandler;
 }
 
 
-export const useGameLogic = (snakeRef: ISnakeRef): void => {
-    const trackToGlobal = ({ x, y, angle }: IPosition): IPosition => ({
-        ...toGlobal({ x, y }),
-        angle,
-    });
-
+export const useGameLogic = (sceneRef: ISceneRef): void => {
     const headRef = useRef<IPosition>(DUCK_START_POSITION);
     const tail = useRef<IPosition[]>([]);
     const moveDirectionRef = useRef<{ direction: MoveDirectionEnum; canBeUpdated: boolean }>({
@@ -71,19 +68,16 @@ export const useGameLogic = (snakeRef: ISnakeRef): void => {
             const headPosition = { ...headRef.current };
             const { direction: headNewDirection } = moveDirectionRef.current;
 
-            const newPosition = makeStep(headPosition, headNewDirection);
+            const newPosition = calculateNewPosition(headPosition, headNewDirection);
 
             moveDirectionRef.current.canBeUpdated = true;
 
             headRef.current = newPosition;
 
-            /* Update duck position */
-            if (!snakeRef.current) {
-                return;
-            }
-            const { x: snakeXPosition, y: snakeYPosition } = toGlobal({ x: headRef.current.x, y: headRef.current.y });
-            const snakeZPosition = (snakeRef.current as any).position.z;
-            (snakeRef.current as any).position.set(snakeXPosition, snakeYPosition, snakeZPosition);
+            setNewPosition(
+                sceneHelperUtil.getObject3DByName(sceneRef.current, NAME.Ducky),
+                newPosition,
+            );
         }, START_TIMER_INTERVAL);
 
         return () => clearInterval(timer);

@@ -1,6 +1,7 @@
 export interface IModel {
-    position: [number, number];
     angle: number;
+    name: string;
+    position: [number, number];
 }
 
 export interface IWithAnimation {
