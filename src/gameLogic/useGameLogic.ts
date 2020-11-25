@@ -1,10 +1,19 @@
 import React, { MutableRefObject, useEffect, useRef } from 'react';
 import { Scene } from 'three';
 
-import { DUCK_START_POSITION, NAME, START_TIMER_INTERVAL } from '../constants';
-import { sceneHelperUtil } from '../sceneHelper';
-import { IPosition, ISnake, MoveDirectionEnum } from './types';
-import { calculateNewPosition, getDirectionByKey, setNewPosition } from './utils';
+import {
+    DUCK_START_POSITION,
+    NAME,
+    START_TIMER_INTERVAL,
+    UPDATES_BY_STEP,
+} from '../constants';
+import { IPosition, MoveDirectionEnum } from './types';
+import {
+    calculateNewPosition,
+    getDirectionByKey,
+    getPosition,
+    setPosition,
+} from './utils';
 
 
 // Here we use local (playground) coordinates. And in the end local coordinates is converted to global.
@@ -32,6 +41,7 @@ interface IUseGameLogicReturn {
 
 
 export const useGameLogic = (sceneRef: ISceneRef): void => {
+    const stepInterval = useRef<number>(START_TIMER_INTERVAL);
     const headRef = useRef<IPosition>(DUCK_START_POSITION);
     const tail = useRef<IPosition[]>([]);
     const moveDirectionRef = useRef<{ direction: MoveDirectionEnum; canBeUpdated: boolean }>({
@@ -68,21 +78,28 @@ export const useGameLogic = (sceneRef: ISceneRef): void => {
             const headPosition = { ...headRef.current };
             const { direction: headNewDirection } = moveDirectionRef.current;
 
-            const newPosition = calculateNewPosition(headPosition, headNewDirection);
-
+            const newHeadPosition = calculateNewPosition(headPosition, headNewDirection);
             moveDirectionRef.current.canBeUpdated = true;
+            headRef.current = newHeadPosition;
 
-            headRef.current = newPosition;
+            let updateCounter = UPDATES_BY_STEP;
+            const updateTimer = setInterval(() => {
+                if (updateCounter === 0) {
+                    clearInterval(updateTimer);
+                    return;
+                }
 
-            setNewPosition(
-                sceneHelperUtil.getObject3DByName(sceneRef.current, NAME.Ducky),
-                newPosition,
-            );
-        }, START_TIMER_INTERVAL);
+                updateCounter -= 1;
+
+                const currentPosition = getPosition(sceneRef.current, NAME.Ducky);
+                const subPosition = calculateNewPosition(currentPosition, headRef.current.angle, 1 / UPDATES_BY_STEP);
+                setPosition(sceneRef.current, NAME.Ducky, subPosition);
+            }, Math.floor(stepInterval.current / UPDATES_BY_STEP - 20));
+        }, stepInterval.current);
 
         return () => clearInterval(timer);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [stepInterval.current]);
 
     // return {
     //     snake: {

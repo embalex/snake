@@ -10,6 +10,7 @@ export const DUCK_START_POSITION: IPosition = {
     angle: degToRad(180),
 };
 export const START_TIMER_INTERVAL = 300;
+export const UPDATES_BY_STEP = 10;
 
 export const NAME = {
     Ducky: 'ducky',

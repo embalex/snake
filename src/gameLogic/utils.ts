@@ -1,7 +1,8 @@
-import { Object3D } from 'three';
+import { Scene } from 'three';
 
-import { FIELD_SIZE } from '../constants';
-import { degToRad } from '../utils';
+import {FIELD_SIZE, NAME, UPDATES_BY_STEP} from '../constants';
+import { sceneHelperUtil } from '../sceneHelper';
+import { degToRad, radToDeg } from '../utils';
 import { IPosition, MoveDirectionEnum } from './types';
 
 
@@ -11,12 +12,12 @@ interface ICoordinates {
 }
 const HALF_FIELD_SIZE = FIELD_SIZE / 2;
 
-type IToGlobal = {
+type IConvertGlobal = {
     (value: number): number;
     (value: ICoordinates): ICoordinates;
 }
 
-export const toGlobal: IToGlobal = (value: any): any => {
+export const toGlobal: IConvertGlobal = (value: any): any => {
     if (typeof value === 'number') {
         return value - HALF_FIELD_SIZE;
     }
@@ -24,6 +25,17 @@ export const toGlobal: IToGlobal = (value: any): any => {
     return {
         x: value.x - HALF_FIELD_SIZE,
         y: value.y - HALF_FIELD_SIZE,
+    };
+};
+
+export const toLocal: IConvertGlobal = (value: any): any => {
+    if (typeof value === 'number') {
+        return value + HALF_FIELD_SIZE;
+    }
+
+    return {
+        x: value.x + HALF_FIELD_SIZE,
+        y: value.y + HALF_FIELD_SIZE,
     };
 };
 
@@ -39,29 +51,29 @@ export const getDirectionByKey = (key: string): MoveDirectionEnum | undefined =>
 );
 
 
-export const calculateNewPosition = (position: IPosition, newDirection: MoveDirectionEnum): IPosition => {
+export const calculateNewPosition = (position: IPosition, newDirection: MoveDirectionEnum, step = 1): IPosition => {
     switch (newDirection) {
         case MoveDirectionEnum.Down:
             return {
                 x: position.x,
-                y: position.y - 1,
+                y: position.y - step,
                 angle: MoveDirectionEnum.Down,
             };
         case MoveDirectionEnum.Right:
             return {
-                x: position.x + 1,
+                x: position.x + step,
                 y: position.y,
                 angle: MoveDirectionEnum.Right,
             };
         case MoveDirectionEnum.Up:
             return {
                 x: position.x,
-                y: position.y + 1,
+                y: position.y + step,
                 angle: MoveDirectionEnum.Up,
             };
         case MoveDirectionEnum.Left:
             return {
-                x: position.x - 1,
+                x: position.x - step,
                 y: position.y,
                 angle: MoveDirectionEnum.Left,
             };
@@ -70,10 +82,19 @@ export const calculateNewPosition = (position: IPosition, newDirection: MoveDire
     }
 };
 
-export const setNewPosition = (model: Object3D, position: IPosition): void => {
+export const setPosition = (scene: Scene, name: string, position: IPosition): void => {
     const { x, y } = toGlobal({ x: position.x, y: position.y });
     const angle = degToRad(position.angle);
-    model.position.setX(x);
-    model.position.setY(y);
-    model.rotation.set(0, 0, angle);
+
+    sceneHelperUtil.setObject3DPositionByName(scene, name, { x, y, angle });
 };
+
+export const getPosition = (scene: Scene, name: string): IPosition => {
+    const globalPosition = sceneHelperUtil.getObject3DPositionByName(scene, name);
+
+    const { x, y } = toLocal({ x: globalPosition.x, y: globalPosition.y });
+    const angle = radToDeg(globalPosition.angle);
+
+    return { x, y, angle };
+};
+
