@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import { forwardRef } from 'react';
 import { useThree } from 'react-three-fiber';
 import { Scene } from 'three';
 

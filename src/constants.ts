@@ -9,12 +9,15 @@ export const DUCK_START_POSITION: IPosition = {
     y: HALF_FIELD_SIZE,
     angle: degToRad(180),
 };
-export const START_TIMER_INTERVAL = 300;
-export const UPDATES_BY_STEP = 10;
+
+export const UPDATES_SETTINGS = {
+    startIntervalMs: 1000,
+    updatesPerStep: 10,
+};
 
 export const NAME = {
     Ducky: 'ducky',
-    createMagmacubeName: (index: number) => {
+    createMagmacubeName: (index: number): string => {
         const magmacubePrefix = 'magmacube';
 
         return `${magmacubePrefix}${index}`;

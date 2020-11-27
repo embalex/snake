@@ -1,6 +1,6 @@
 import { Scene } from 'three';
 
-import {FIELD_SIZE, NAME, UPDATES_BY_STEP} from '../constants';
+import { FIELD_SIZE } from '../constants';
 import { sceneHelperUtil } from '../sceneHelper';
 import { degToRad, radToDeg } from '../utils';
 import { IPosition, MoveDirectionEnum } from './types';
@@ -17,7 +17,7 @@ type IConvertGlobal = {
     (value: ICoordinates): ICoordinates;
 }
 
-export const toGlobal: IConvertGlobal = (value: any): any => {
+export const toGlobal: IConvertGlobal = (value: number | ICoordinates): any => {
     if (typeof value === 'number') {
         return value - HALF_FIELD_SIZE;
     }
@@ -28,7 +28,7 @@ export const toGlobal: IConvertGlobal = (value: any): any => {
     };
 };
 
-export const toLocal: IConvertGlobal = (value: any): any => {
+export const toLocal: IConvertGlobal = (value: number | ICoordinates): any => {
     if (typeof value === 'number') {
         return value + HALF_FIELD_SIZE;
     }
@@ -38,18 +38,6 @@ export const toLocal: IConvertGlobal = (value: any): any => {
         y: value.y + HALF_FIELD_SIZE,
     };
 };
-
-const keyToDirectionMap = {
-    ArrowLeft: MoveDirectionEnum.Left,
-    ArrowRight: MoveDirectionEnum.Right,
-    ArrowUp: MoveDirectionEnum.Up,
-    ArrowDown: MoveDirectionEnum.Down,
-};
-
-export const getDirectionByKey = (key: string): MoveDirectionEnum | undefined => (
-    keyToDirectionMap[key as keyof typeof keyToDirectionMap]
-);
-
 
 export const calculateNewPosition = (position: IPosition, newDirection: MoveDirectionEnum, step = 1): IPosition => {
     switch (newDirection) {
@@ -97,4 +85,3 @@ export const getPosition = (scene: Scene, name: string): IPosition => {
 
     return { x, y, angle };
 };
-

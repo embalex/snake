@@ -1,16 +1,21 @@
-import React, { MutableRefObject, useEffect, useRef } from 'react';
+import { MutableRefObject, useEffect, useRef } from 'react';
 import { Scene } from 'three';
 
 import {
     DUCK_START_POSITION,
     NAME,
-    START_TIMER_INTERVAL,
-    UPDATES_BY_STEP,
+    UPDATES_SETTINGS,
 } from '../constants';
-import { IPosition, MoveDirectionEnum } from './types';
+import { startSmoothTimer, stopSmoothTimer } from './smoothTimer';
+import {
+    IDirectionBuffer,
+    IPosition,
+    IUpdateState,
+    MoveDirectionEnum,
+} from './types';
+import { useKeys } from './useKeys';
 import {
     calculateNewPosition,
-    getDirectionByKey,
     getPosition,
     setPosition,
 } from './utils';
@@ -35,78 +40,51 @@ import {
 
 type ISceneRef = MutableRefObject<Scene>
 
-interface IUseGameLogicReturn {
-    onKeyPress: React.KeyboardEventHandler;
-}
-
-
 export const useGameLogic = (sceneRef: ISceneRef): void => {
-    const stepInterval = useRef<number>(START_TIMER_INTERVAL);
-    const headRef = useRef<IPosition>(DUCK_START_POSITION);
-    const tail = useRef<IPosition[]>([]);
-    const moveDirectionRef = useRef<{ direction: MoveDirectionEnum; canBeUpdated: boolean }>({
+    const updatesStateRef = useRef<IUpdateState>({
+        stepInterval: UPDATES_SETTINGS.startIntervalMs,
+        smoothTimerId: null,
+        smoothTimerCounter: UPDATES_SETTINGS.updatesPerStep,
+    });
+
+    const headPositionRef = useRef<IPosition>(DUCK_START_POSITION);
+    const directionBufferRef = useRef<IDirectionBuffer>({
         direction: MoveDirectionEnum.Down,
         canBeUpdated: false,
     });
+    useKeys(directionBufferRef);
 
-    const onKeyPress = (event: KeyboardEvent) => {
-        const { canBeUpdated } = moveDirectionRef.current;
-        const newDirection = getDirectionByKey(event.key);
-
-        if (!canBeUpdated) {
-            return;
-        }
-
-        if (newDirection === undefined) {
-            return;
-        }
-
-        moveDirectionRef.current = {
-            canBeUpdated: false,
-            direction: newDirection,
-        };
-    };
 
     useEffect(() => {
-        document.addEventListener('keydown', onKeyPress);
-
-        return () => document.removeEventListener('keydown', onKeyPress);
-    }, []);
-
-    useEffect(() => {
-        const timer = setInterval(() => {
-            const headPosition = { ...headRef.current };
-            const { direction: headNewDirection } = moveDirectionRef.current;
+        const makeStep = () => {
+            const headPosition = { ...headPositionRef.current };
+            const { direction: headNewDirection } = directionBufferRef.current;
 
             const newHeadPosition = calculateNewPosition(headPosition, headNewDirection);
-            moveDirectionRef.current.canBeUpdated = true;
-            headRef.current = newHeadPosition;
+            directionBufferRef.current.canBeUpdated = true;
+            headPositionRef.current = newHeadPosition;
 
-            let updateCounter = UPDATES_BY_STEP;
-            const updateTimer = setInterval(() => {
-                if (updateCounter === 0) {
-                    clearInterval(updateTimer);
-                    return;
+            const onMicroStep = () => {
+                try {
+                    const currentPosition = getPosition(sceneRef.current, NAME.Ducky);
+                    const subPosition = calculateNewPosition(
+                        currentPosition,
+                        headPositionRef.current.angle,
+                        1 / UPDATES_SETTINGS.updatesPerStep,
+                    );
+                    setPosition(sceneRef.current, NAME.Ducky, subPosition);
+                } catch (error) {
+                    // eslint-disable-next-line no-console
+                    console.error(error);
                 }
+            };
 
-                updateCounter -= 1;
+            startSmoothTimer(updatesStateRef, onMicroStep, makeStep);
+        };
 
-                const currentPosition = getPosition(sceneRef.current, NAME.Ducky);
-                const subPosition = calculateNewPosition(currentPosition, headRef.current.angle, 1 / UPDATES_BY_STEP);
-                setPosition(sceneRef.current, NAME.Ducky, subPosition);
-            }, Math.floor(stepInterval.current / UPDATES_BY_STEP - 20));
-        }, stepInterval.current);
+        makeStep();
 
-        return () => clearInterval(timer);
+        return () => { stopSmoothTimer(updatesStateRef); };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [stepInterval.current]);
-
-    // return {
-    //     snake: {
-    //         head: trackToGlobal(headRef.current),
-    //         magmacubes: tail.current.map((tailTrack) => trackToGlobal(tailTrack)),
-    //     },
-    //     apple: toGlobal({ x: 10, y: 10 }),
-    //     onKeyPress,
-    // };
+    }, []);
 };

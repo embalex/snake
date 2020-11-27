@@ -10,3 +10,14 @@ export enum MoveDirectionEnum {
     Down = 180,
     Left = 90,
 }
+
+export interface IDirectionBuffer {
+    direction: MoveDirectionEnum;
+    canBeUpdated: boolean;
+}
+
+export interface IUpdateState {
+    stepInterval: number;
+    smoothTimerId: number | null;
+    smoothTimerCounter: number;
+}

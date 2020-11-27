@@ -15,7 +15,7 @@ interface IProps {
     magmacubes: IItemPosition[];
 }
 
-export const Snake = React.forwardRef<React.ReactNode, IProps>(({ head, magmacubes }, snakeRef) => (
+export const Snake: React.FC<IProps> = ({ head, magmacubes }) => (
     <>
         <Model.Ducky
             name={NAME.Ducky}
@@ -34,4 +34,4 @@ export const Snake = React.forwardRef<React.ReactNode, IProps>(({ head, magmacub
             />
         ))}
     </>
-));
+);
