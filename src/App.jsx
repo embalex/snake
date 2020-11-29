@@ -5,7 +5,6 @@ import { Sky } from 'drei';
 import { Vector3 } from 'three';
 
 import { Camera } from './camera';
-import { FIELD_SIZE } from './constants';
 import { useGameLogic } from './gameLogic';
 import { Ground } from './Ground';
 import { Model } from './model';
@@ -16,8 +15,6 @@ import { Snake } from './Snake';
 export const App = () => {
     const sceneRef = useRef(null);
     useGameLogic(sceneRef);
-
-    const halfFieldSize = FIELD_SIZE / 2;
 
     return (
         <Canvas color="red">
@@ -31,10 +28,7 @@ export const App = () => {
             <Suspense fallback={null}>
                 <Ground />
                 <Snake magmacubes={[]} />
-                <Model.Apple position={[-halfFieldSize, -halfFieldSize]} />
-                <Model.Apple position={[-halfFieldSize, halfFieldSize]} />
-                <Model.Apple position={[halfFieldSize, -halfFieldSize]} />
-                <Model.Apple position={[halfFieldSize, halfFieldSize]} />
+                <Model.Apple />
                 <SceneHelperComponent ref={sceneRef} />
             </Suspense>
         </Canvas>

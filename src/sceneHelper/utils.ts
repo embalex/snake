@@ -1,6 +1,6 @@
 import { Object3D, Scene } from 'three';
 
-import { IPosition } from '../gameLogic/types';
+import { IPosition } from '../types';
 
 
 export const getObject3DByName = (scene: Scene, name: string): Object3D | never => {

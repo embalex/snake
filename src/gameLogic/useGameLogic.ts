@@ -2,15 +2,16 @@ import { MutableRefObject, useEffect, useRef } from 'react';
 import { Scene } from 'three';
 
 import {
+    APPLE_START_POSITION,
     DUCK_START_POSITION,
     NAME,
     UPDATES_SETTINGS,
 } from '../constants';
-import { startSmoothTimer, stopSmoothTimer } from './smoothTimer';
+import { IPosition } from '../types';
+import { appleLogicThread } from './appleLogic';
+import { stepperBuilder } from './stepper';
 import {
     IDirectionBuffer,
-    IPosition,
-    IUpdateState,
     MoveDirectionEnum,
 } from './types';
 import { useKeys } from './useKeys';
@@ -41,21 +42,18 @@ import {
 type ISceneRef = MutableRefObject<Scene>
 
 export const useGameLogic = (sceneRef: ISceneRef): void => {
-    const updatesStateRef = useRef<IUpdateState>({
-        stepInterval: UPDATES_SETTINGS.startIntervalMs,
-        smoothTimerId: null,
-        smoothTimerCounter: UPDATES_SETTINGS.updatesPerStep,
-    });
-
     const headPositionRef = useRef<IPosition>(DUCK_START_POSITION);
     const directionBufferRef = useRef<IDirectionBuffer>({
         direction: MoveDirectionEnum.Down,
         canBeUpdated: false,
     });
+    const appleRef = useRef<IPosition>(APPLE_START_POSITION);
     useKeys(directionBufferRef);
 
 
     useEffect(() => {
+        const stepper = stepperBuilder(UPDATES_SETTINGS.startIntervalMs, UPDATES_SETTINGS.intervalDecrease);
+
         const makeStep = () => {
             const headPosition = { ...headPositionRef.current };
             const { direction: headNewDirection } = directionBufferRef.current;
@@ -70,7 +68,7 @@ export const useGameLogic = (sceneRef: ISceneRef): void => {
                     const subPosition = calculateNewPosition(
                         currentPosition,
                         headPositionRef.current.angle,
-                        1 / UPDATES_SETTINGS.updatesPerStep,
+                        1 / stepper.getUpdatesByStep(),
                     );
                     setPosition(sceneRef.current, NAME.Ducky, subPosition);
                 } catch (error) {
@@ -79,12 +77,21 @@ export const useGameLogic = (sceneRef: ISceneRef): void => {
                 }
             };
 
-            startSmoothTimer(updatesStateRef, onMicroStep, makeStep);
+            stepper.start(
+                onMicroStep,
+                () => {
+                    const { isHeadEatApple } = appleLogicThread(sceneRef.current, appleRef, [headPositionRef.current]);
+                    if (isHeadEatApple) {
+                        stepper.increaseSpeed();
+                    }
+                    makeStep();
+                },
+            );
         };
 
         makeStep();
 
-        return () => { stopSmoothTimer(updatesStateRef); };
+        return stepper.stop;
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 };

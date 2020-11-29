@@ -1,4 +1,4 @@
-import { IPosition } from './gameLogic/types';
+import { IPosition } from './types';
 import { degToRad } from './utils';
 
 
@@ -10,13 +10,20 @@ export const DUCK_START_POSITION: IPosition = {
     angle: degToRad(180),
 };
 
+export const APPLE_START_POSITION: IPosition = {
+    x: HALF_FIELD_SIZE - 1,
+    y: HALF_FIELD_SIZE - 1,
+    angle: 0,
+};
+
 export const UPDATES_SETTINGS = {
     startIntervalMs: 1000,
-    updatesPerStep: 10,
+    intervalDecrease: 500,
 };
 
 export const NAME = {
     Ducky: 'ducky',
+    Apple: 'apple',
     createMagmacubeName: (index: number): string => {
         const magmacubePrefix = 'magmacube';
 

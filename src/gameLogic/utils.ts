@@ -2,8 +2,9 @@ import { Scene } from 'three';
 
 import { FIELD_SIZE } from '../constants';
 import { sceneHelperUtil } from '../sceneHelper';
+import { IPosition } from '../types';
 import { degToRad, radToDeg } from '../utils';
-import { IPosition, MoveDirectionEnum } from './types';
+import { MoveDirectionEnum } from './types';
 
 
 interface ICoordinates {
@@ -38,6 +39,11 @@ export const toLocal: IConvertGlobal = (value: number | ICoordinates): any => {
         y: value.y + HALF_FIELD_SIZE,
     };
 };
+
+export const isTheSameXYCoordinates = (
+    { x: x1, y: y1 }: IPosition,
+    { x: x2, y: y2 }: IPosition,
+): boolean => (x1 === x2) && (y1 === y2);
 
 export const calculateNewPosition = (position: IPosition, newDirection: MoveDirectionEnum, step = 1): IPosition => {
     switch (newDirection) {
