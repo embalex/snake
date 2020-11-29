@@ -12,7 +12,7 @@ export const DUCK_START_POSITION: IPosition = {
 export const MAX_MAGMACUBES = 100;
 
 export const UPDATES_SETTINGS = {
-    startIntervalMs: 1000,
+    startIntervalMs: 700,
     intervalDecrease: 10,
 };
 

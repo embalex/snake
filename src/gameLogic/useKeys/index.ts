@@ -1,29 +1,35 @@
-import { MutableRefObject, useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
-import { IDirectionBuffer } from '../types';
-import { getDirectionByKey } from './utils';
+import { KeyPressedEnum } from './types';
+import { getKeyPressed } from './utils';
 
 
-export const useKeys = (directionBufferRef: MutableRefObject<IDirectionBuffer>): void => {
+export const useKeys = () => {
+    const keyPressedRef = useRef<KeyPressedEnum>(KeyPressedEnum.None);
+
     useEffect(() => {
         const onKeyPress = (event: KeyboardEvent) => {
-            const { current: directionBuffer } = directionBufferRef;
-            const newDirection = getDirectionByKey(event.key);
+            const key = getKeyPressed(event.key);
 
-            if (!directionBuffer.canBeUpdated) {
+            if (key === undefined) {
+                keyPressedRef.current = KeyPressedEnum.None;
                 return;
             }
 
-            if (newDirection === undefined) {
-                return;
-            }
-
-            directionBuffer.canBeUpdated = false;
-            directionBuffer.direction = newDirection;
+            keyPressedRef.current = key;
         };
 
         document.addEventListener('keydown', onKeyPress);
 
         return () => document.removeEventListener('keydown', onKeyPress);
-    }, [directionBufferRef]);
+    }, []);
+
+    return {
+        getPressedKey: (): KeyPressedEnum => {
+            const key = keyPressedRef.current;
+            keyPressedRef.current = KeyPressedEnum.None;
+
+            return key;
+        },
+    };
 };

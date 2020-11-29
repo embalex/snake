@@ -1,13 +1,11 @@
-import { MoveDirectionEnum } from '../types';
+import { KeyPressedEnum } from './types';
 
 
 const keyToDirectionMap = {
-    ArrowLeft: MoveDirectionEnum.Left,
-    ArrowRight: MoveDirectionEnum.Right,
-    ArrowUp: MoveDirectionEnum.Up,
-    ArrowDown: MoveDirectionEnum.Down,
+    ArrowLeft: KeyPressedEnum.LeftArrow,
+    ArrowRight: KeyPressedEnum.RightArrow,
 };
 
-export const getDirectionByKey = (key: string): MoveDirectionEnum | undefined => (
+export const getKeyPressed = (key: string): KeyPressedEnum | undefined => (
     keyToDirectionMap[key as keyof typeof keyToDirectionMap]
 );

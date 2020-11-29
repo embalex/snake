@@ -3,9 +3,10 @@ import { Scene } from 'three';
 
 import { DUCK_START_POSITION, NAME } from '../../constants';
 import { IPosition } from '../../types';
-import { MoveDirectionEnum } from '../types';
+import { KeyPressedEnum } from '../useKeys/types';
 import { getPosition, setPosition } from '../utils';
-import { calculateNewPosition } from './utils';
+import { MoveDirectionEnum } from './types';
+import { calculateDirection, calculateNewPosition } from './utils';
 
 
 const step = (
@@ -58,7 +59,7 @@ const microStep = (
 
 type ISnakeBuilder = (sceneRef: MutableRefObject<Scene>, getUpdatesByStep: () => number) => ({
     addMagmacube: () => void;
-    step: (direction: MoveDirectionEnum) => void;
+    step: (direction: KeyPressedEnum) => void;
     microStep: () => void;
     getPositions: () => IPosition[];
 });
@@ -72,12 +73,12 @@ export const snakeBuilder: ISnakeBuilder = (sceneRef, getUpdatesByStep) => {
             const lastTailItemPosition = { ...mutableTailPosition[mutableTailPosition.length - 1] };
             mutableTailPosition.push({ ...lastTailItemPosition });
         },
-        step: (direction) => {
+        step: (keyPressed) => {
             const [newDuckyPosition, newTailPosition] = step(
                 sceneRef.current,
                 mutableDuckyPosition,
                 mutableTailPosition,
-                direction,
+                calculateDirection(keyPressed, mutableDuckyPosition.angle),
             );
 
             mutableDuckyPosition = newDuckyPosition;

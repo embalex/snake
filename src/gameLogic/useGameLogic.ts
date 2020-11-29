@@ -1,4 +1,4 @@
-import { MutableRefObject, useEffect, useRef } from 'react';
+import { MutableRefObject, useEffect } from 'react';
 import { Scene } from 'three';
 
 import {
@@ -8,10 +8,6 @@ import { sceneHelperUtil } from '../sceneHelper';
 import { appleBuilder } from './apple';
 import { snakeBuilder } from './snake';
 import { stepperBuilder } from './stepper';
-import {
-    IDirectionBuffer,
-    MoveDirectionEnum,
-} from './types';
 import { useKeys } from './useKeys';
 
 
@@ -32,11 +28,7 @@ import { useKeys } from './useKeys';
 */
 
 export const useGameLogic = (sceneRef: MutableRefObject<Scene>): void => {
-    const directionBufferRef = useRef<IDirectionBuffer>({
-        direction: MoveDirectionEnum.Down,
-        canBeUpdated: false,
-    });
-    useKeys(directionBufferRef);
+    const { getPressedKey } = useKeys();
 
     useEffect(() => {
         // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -56,15 +48,13 @@ export const useGameLogic = (sceneRef: MutableRefObject<Scene>): void => {
                             stepper.increaseSpeed();
                             snake.addMagmacube();
                         }
-                        snake.step(directionBufferRef.current.direction);
-                        directionBufferRef.current.canBeUpdated = true;
+                        snake.step(getPressedKey());
                         makeStep();
                     },
                 );
             };
 
-            snake.step(directionBufferRef.current.direction);
-            directionBufferRef.current.canBeUpdated = true;
+            snake.step(getPressedKey());
             makeStep();
             return stepper.stop;
         };

@@ -1,5 +1,6 @@
 import { IPosition } from '../../types';
-import { MoveDirectionEnum } from '../types';
+import { KeyPressedEnum } from '../useKeys/types';
+import { MoveDirectionEnum } from './types';
 
 
 export const calculateNewPosition = (position: IPosition, newDirection: MoveDirectionEnum, step = 1): IPosition => {
@@ -31,4 +32,19 @@ export const calculateNewPosition = (position: IPosition, newDirection: MoveDire
         default:
             throw new Error(`calculateNewPosition. Unknown newDirection type = ${newDirection}`);
     }
+};
+
+export const calculateDirection = (keyPressed: KeyPressedEnum, direction: MoveDirectionEnum): MoveDirectionEnum => {
+    if (keyPressed === KeyPressedEnum.None) {
+        return direction;
+    }
+
+    const cw = [MoveDirectionEnum.Up, MoveDirectionEnum.Right, MoveDirectionEnum.Down, MoveDirectionEnum.Left];
+    const ccw = [MoveDirectionEnum.Up, MoveDirectionEnum.Left, MoveDirectionEnum.Down, MoveDirectionEnum.Right];
+
+    const rotation = keyPressed === KeyPressedEnum.LeftArrow ? ccw : cw;
+    const index = rotation.indexOf(direction);
+    const newIndex = (index + 1) % rotation.length;
+
+    return rotation[newIndex];
 };
