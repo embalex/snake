@@ -25,7 +25,9 @@ const step = (
     }
 
     const newDuckyPosition = calculateNewPosition(duckyPosition, direction);
-    const newTailPosition = [{ ...duckyPosition }, ...tailPosition.slice(0, -1)];
+    const newTailPosition = tailPosition.length
+        ? [{ ...duckyPosition }, ...tailPosition.slice(0, -1)]
+        : [];
 
     return [newDuckyPosition, newTailPosition] as const;
 };

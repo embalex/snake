@@ -9,12 +9,6 @@ export const DUCK_START_POSITION: IPosition = {
     angle: 180,
 };
 
-export const APPLE_START_POSITION: IPosition = {
-    x: HALF_FIELD_SIZE - 1,
-    y: HALF_FIELD_SIZE - 1,
-    angle: 0,
-};
-
 export const MAX_MAGMACUBES = 100;
 
 export const UPDATES_SETTINGS = {

@@ -15,14 +15,14 @@ export const Apple: React.FC = () => {
     return (
         <group
             name={NAME.Apple}
-            position={[0, 0, 0]}
+            position={[0, 0, -100]}
             dispose={null}
         >
             <mesh>
                 <primitive
                     object={appleModelScene}
                     rotation={[degToRad(90), 0, 0]}
-                    position={[0, 0.3, 0.8]}
+                    position={[0, -0.2, 0.8]}
                     scale={[0.00015, 0.00015, 0.00015]}
                 />
             </mesh>

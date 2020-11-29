@@ -2,12 +2,10 @@ import { MutableRefObject, useEffect, useRef } from 'react';
 import { Scene } from 'three';
 
 import {
-    APPLE_START_POSITION,
     UPDATES_SETTINGS,
 } from '../constants';
 import { sceneHelperUtil } from '../sceneHelper';
-import { IPosition } from '../types';
-import { appleLogicThread } from './appleLogic';
+import { appleBuilder } from './apple';
 import { snakeBuilder } from './snake';
 import { stepperBuilder } from './stepper';
 import {
@@ -38,7 +36,6 @@ export const useGameLogic = (sceneRef: MutableRefObject<Scene>): void => {
         direction: MoveDirectionEnum.Down,
         canBeUpdated: false,
     });
-    const appleRef = useRef<IPosition>(APPLE_START_POSITION);
     useKeys(directionBufferRef);
 
     useEffect(() => {
@@ -48,13 +45,14 @@ export const useGameLogic = (sceneRef: MutableRefObject<Scene>): void => {
         const startGame = (): () => void => {
             const stepper = stepperBuilder(UPDATES_SETTINGS.startIntervalMs, UPDATES_SETTINGS.intervalDecrease);
             const snake = snakeBuilder(sceneRef, stepper.getUpdatesByStep);
+            const apple = appleBuilder(sceneRef);
 
             const makeStep = () => {
                 stepper.step(
                     snake.microStep,
                     () => {
-                        const { isHeadEatApple } = appleLogicThread(sceneRef.current, appleRef, snake.getPositions());
-                        if (isHeadEatApple) {
+                        const { isSnakeEatApple } = apple.step(snake.getPositions());
+                        if (isSnakeEatApple) {
                             stepper.increaseSpeed();
                             snake.addMagmacube();
                         }
@@ -65,6 +63,8 @@ export const useGameLogic = (sceneRef: MutableRefObject<Scene>): void => {
                 );
             };
 
+            snake.step(directionBufferRef.current.direction);
+            directionBufferRef.current.canBeUpdated = true;
             makeStep();
             return stepper.stop;
         };
@@ -77,7 +77,7 @@ export const useGameLogic = (sceneRef: MutableRefObject<Scene>): void => {
             }
         }, 100);
 
-        return stopStepper();
+        return stopStepper;
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 };
