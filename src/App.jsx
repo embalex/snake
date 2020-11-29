@@ -27,7 +27,7 @@ export const App = () => {
             <Sky sunPosition={new Vector3(100, 10, 100)} />
             <Suspense fallback={null}>
                 <Ground />
-                <Snake magmacubes={[]} />
+                <Snake />
                 <Model.Apple />
                 <SceneHelperComponent ref={sceneRef} />
             </Suspense>

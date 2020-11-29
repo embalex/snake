@@ -1,5 +1,6 @@
 import { Object3D, Scene } from 'three';
 
+import { NAME } from '../constants';
 import { IPosition } from '../types';
 
 
@@ -28,5 +29,17 @@ export const setObject3DPositionByName = (scene: Scene, name: string, position: 
 
     object3D.position.setX(position.x);
     object3D.position.setY(position.y);
+    object3D.position.setZ(0);
     object3D.rotation.set(0, 0, position.angle);
+};
+
+export const isSceneReady = (scene: Scene): boolean => {
+    try {
+        getObject3DByName(scene, NAME.Ducky);
+        getObject3DByName(scene, NAME.Apple);
+
+        return true;
+    } catch (error) {
+        return false;
+    }
 };

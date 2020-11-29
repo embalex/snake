@@ -4,7 +4,6 @@ import { FIELD_SIZE } from '../constants';
 import { sceneHelperUtil } from '../sceneHelper';
 import { IPosition } from '../types';
 import { degToRad, radToDeg } from '../utils';
-import { MoveDirectionEnum } from './types';
 
 
 interface ICoordinates {
@@ -44,37 +43,6 @@ export const isTheSameXYCoordinates = (
     { x: x1, y: y1 }: IPosition,
     { x: x2, y: y2 }: IPosition,
 ): boolean => (x1 === x2) && (y1 === y2);
-
-export const calculateNewPosition = (position: IPosition, newDirection: MoveDirectionEnum, step = 1): IPosition => {
-    switch (newDirection) {
-        case MoveDirectionEnum.Down:
-            return {
-                x: position.x,
-                y: position.y - step,
-                angle: MoveDirectionEnum.Down,
-            };
-        case MoveDirectionEnum.Right:
-            return {
-                x: position.x + step,
-                y: position.y,
-                angle: MoveDirectionEnum.Right,
-            };
-        case MoveDirectionEnum.Up:
-            return {
-                x: position.x,
-                y: position.y + step,
-                angle: MoveDirectionEnum.Up,
-            };
-        case MoveDirectionEnum.Left:
-            return {
-                x: position.x - step,
-                y: position.y,
-                angle: MoveDirectionEnum.Left,
-            };
-        default:
-            throw new Error(`GameLogicUtils. makeStep. Unknown newDirection type = ${newDirection}`);
-    }
-};
 
 export const setPosition = (scene: Scene, name: string, position: IPosition): void => {
     const { x, y } = toGlobal({ x: position.x, y: position.y });

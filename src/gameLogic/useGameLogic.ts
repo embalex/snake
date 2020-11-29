@@ -3,23 +3,18 @@ import { Scene } from 'three';
 
 import {
     APPLE_START_POSITION,
-    DUCK_START_POSITION,
-    NAME,
     UPDATES_SETTINGS,
 } from '../constants';
+import { sceneHelperUtil } from '../sceneHelper';
 import { IPosition } from '../types';
 import { appleLogicThread } from './appleLogic';
+import { snakeBuilder } from './snake';
 import { stepperBuilder } from './stepper';
 import {
     IDirectionBuffer,
     MoveDirectionEnum,
 } from './types';
 import { useKeys } from './useKeys';
-import {
-    calculateNewPosition,
-    getPosition,
-    setPosition,
-} from './utils';
 
 
 // Here we use local (playground) coordinates. And in the end local coordinates is converted to global.
@@ -38,11 +33,7 @@ import {
             180deg
 */
 
-
-type ISceneRef = MutableRefObject<Scene>
-
-export const useGameLogic = (sceneRef: ISceneRef): void => {
-    const headPositionRef = useRef<IPosition>(DUCK_START_POSITION);
+export const useGameLogic = (sceneRef: MutableRefObject<Scene>): void => {
     const directionBufferRef = useRef<IDirectionBuffer>({
         direction: MoveDirectionEnum.Down,
         canBeUpdated: false,
@@ -50,48 +41,43 @@ export const useGameLogic = (sceneRef: ISceneRef): void => {
     const appleRef = useRef<IPosition>(APPLE_START_POSITION);
     useKeys(directionBufferRef);
 
-
     useEffect(() => {
-        const stepper = stepperBuilder(UPDATES_SETTINGS.startIntervalMs, UPDATES_SETTINGS.intervalDecrease);
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        let stopStepper: () => void = () => {};
 
-        const makeStep = () => {
-            const headPosition = { ...headPositionRef.current };
-            const { direction: headNewDirection } = directionBufferRef.current;
+        const startGame = (): () => void => {
+            const stepper = stepperBuilder(UPDATES_SETTINGS.startIntervalMs, UPDATES_SETTINGS.intervalDecrease);
+            const snake = snakeBuilder(sceneRef, stepper.getUpdatesByStep);
 
-            const newHeadPosition = calculateNewPosition(headPosition, headNewDirection);
-            directionBufferRef.current.canBeUpdated = true;
-            headPositionRef.current = newHeadPosition;
-
-            const onMicroStep = () => {
-                try {
-                    const currentPosition = getPosition(sceneRef.current, NAME.Ducky);
-                    const subPosition = calculateNewPosition(
-                        currentPosition,
-                        headPositionRef.current.angle,
-                        1 / stepper.getUpdatesByStep(),
-                    );
-                    setPosition(sceneRef.current, NAME.Ducky, subPosition);
-                } catch (error) {
-                    // eslint-disable-next-line no-console
-                    console.error(error);
-                }
+            const makeStep = () => {
+                stepper.step(
+                    snake.microStep,
+                    () => {
+                        const { isHeadEatApple } = appleLogicThread(sceneRef.current, appleRef, snake.getPositions());
+                        if (isHeadEatApple) {
+                            stepper.increaseSpeed();
+                            snake.addMagmacube();
+                        }
+                        snake.step(directionBufferRef.current.direction);
+                        directionBufferRef.current.canBeUpdated = true;
+                        makeStep();
+                    },
+                );
             };
 
-            stepper.start(
-                onMicroStep,
-                () => {
-                    const { isHeadEatApple } = appleLogicThread(sceneRef.current, appleRef, [headPositionRef.current]);
-                    if (isHeadEatApple) {
-                        stepper.increaseSpeed();
-                    }
-                    makeStep();
-                },
-            );
+            makeStep();
+            return stepper.stop;
         };
 
-        makeStep();
+        const sceneTestTimer = setInterval(() => {
+            if (sceneHelperUtil.isSceneReady(sceneRef.current)) {
+                clearInterval(sceneTestTimer);
 
-        return stepper.stop;
+                stopStepper = startGame();
+            }
+        }, 100);
+
+        return stopStepper();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 };

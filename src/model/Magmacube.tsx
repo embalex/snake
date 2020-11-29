@@ -1,22 +1,18 @@
 import React from 'react';
 
 import { degToRad } from '../utils';
-import { IModel } from './types';
 import { useModel } from './useModel';
 import { createAnimationConfig } from './utils';
 
 
 interface IProps {
+    name: string;
+
     cubeNumber?: number;
 }
 
 const CUBE_ANIMATION_BASE_TIME_S = 0.1;
-export const Magmacube: React.FC<IModel & IProps> = ({
-    angle,
-    cubeNumber = 0,
-    name,
-    position,
-}) => {
+export const Magmacube: React.FC<IProps> = ({ cubeNumber = 0, name }) => {
     const magmacubeModelScene = useModel(
         '/models/magmacube/scene.gltf',
         createAnimationConfig(0, 1, cubeNumber * CUBE_ANIMATION_BASE_TIME_S),
@@ -25,8 +21,7 @@ export const Magmacube: React.FC<IModel & IProps> = ({
     return (
         <group
             name={name}
-            position={[...position, 0]}
-            rotation={[0, 0, angle]}
+            position={[0, 0, -100]}
         >
             <primitive
                 object={magmacubeModelScene}

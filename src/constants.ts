@@ -1,5 +1,4 @@
 import { IPosition } from './types';
-import { degToRad } from './utils';
 
 
 const HALF_FIELD_SIZE = 10;
@@ -7,7 +6,7 @@ export const FIELD_SIZE = HALF_FIELD_SIZE * 2;
 export const DUCK_START_POSITION: IPosition = {
     x: HALF_FIELD_SIZE,
     y: HALF_FIELD_SIZE,
-    angle: degToRad(180),
+    angle: 180,
 };
 
 export const APPLE_START_POSITION: IPosition = {
@@ -16,9 +15,11 @@ export const APPLE_START_POSITION: IPosition = {
     angle: 0,
 };
 
+export const MAX_MAGMACUBES = 100;
+
 export const UPDATES_SETTINGS = {
     startIntervalMs: 1000,
-    intervalDecrease: 500,
+    intervalDecrease: 10,
 };
 
 export const NAME = {
