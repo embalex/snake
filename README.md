@@ -1,2 +1,2 @@
-# [Snake](http://embalex.github.io/snake)
+# [Snake](https://embalex.github.io/snake/)
 
