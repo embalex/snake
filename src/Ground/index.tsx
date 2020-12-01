@@ -12,7 +12,7 @@ const BIG_TREES_AMOUNT = 60;
 const BUSHES_AMOUNT = 1000;
 
 export const Ground: React.FC = () => {
-    const loadedTexture = useLoader(TextureLoader, '/textures/grass.jpg');
+    const loadedTexture = useLoader(TextureLoader, 'textures/grass.jpg');
     useEffect(() => {
         loadedTexture.wrapS = RepeatWrapping;
         loadedTexture.wrapT = RepeatWrapping;
