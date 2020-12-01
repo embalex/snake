@@ -4,7 +4,11 @@ import { DirectionKeyPressedEnum, KeyPressedEnum } from './types';
 import { getDirectionKeyPressed, isResetKeyPressed } from './utils';
 
 
-export const useKeys = () => {
+type IUseKeys = () => {
+    getPressedDirectionKey: () => KeyPressedEnum;
+    isResetKeyPressed: () => boolean;
+}
+export const useKeys: IUseKeys = () => {
     const keyPressedRef = useRef<DirectionKeyPressedEnum | undefined>(undefined);
     const keyResetRef = useRef<boolean>(false);
 
@@ -28,7 +32,7 @@ export const useKeys = () => {
     }, []);
 
     return {
-        getPressedDirectionKey: (): KeyPressedEnum => {
+        getPressedDirectionKey: () => {
             const key = keyPressedRef.current;
             keyPressedRef.current = undefined;
 

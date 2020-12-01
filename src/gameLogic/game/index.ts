@@ -1,4 +1,4 @@
-import { MutableRefObject } from 'react';
+import { RefObject } from 'react';
 import { AmbientLight, Scene } from 'three';
 
 import { BLOCKED_ZONE_SIZE, NAME } from '../../constants';
@@ -34,31 +34,43 @@ const gameStart = (scene: Scene): void => {
     ambientLight.intensity = 1;
 };
 
-type IGameBuilder = (scene: MutableRefObject<Scene>) => {
+type IGameBuilder = (scene: RefObject<Scene | null>) => {
     step: (snakeHead: IPlainPosition, snakeTail:IPlainPosition []) => void,
     end: () => void;
     start: () => void;
     isContinued: () => boolean;
 }
 
-export const gameBuilder: IGameBuilder = (sceneRef: MutableRefObject<Scene>) => {
+export const gameBuilder: IGameBuilder = (sceneRef) => {
     const getBlockedArea = initBlockedArea();
     let isGameFinished = false;
 
     return {
         step: (snakeHead, snakeTail) => {
+            const scene = sceneRef.current;
+            if (!scene) {
+                return;
+            }
             isGameFinished = isGameOver(snakeHead, snakeTail, getBlockedArea());
             if (isGameFinished) {
-                gameEnd(sceneRef.current);
+                gameEnd(scene);
             }
         },
         start: () => {
+            const scene = sceneRef.current;
+            if (!scene) {
+                return;
+            }
             isGameFinished = false;
-            gameStart(sceneRef.current);
+            gameStart(scene);
         },
         end: () => {
+            const scene = sceneRef.current;
+            if (!scene) {
+                return;
+            }
             isGameFinished = true;
-            gameEnd(sceneRef.current);
+            gameEnd(scene);
         },
         isContinued: () => !isGameFinished,
     };

@@ -1,4 +1,4 @@
-import { MutableRefObject } from 'react';
+import { RefObject } from 'react';
 import { Scene } from 'three';
 
 import { DUCK_START_POSITION, NAME } from '../../constants';
@@ -62,7 +62,7 @@ const getInitialParameters = (): { initDuckyPosition: IPosition, initTailPositio
     initTailPosition: [],
 });
 
-type ISnakeBuilder = (sceneRef: MutableRefObject<Scene>, getUpdatesByStep: () => number) => ({
+type ISnakeBuilder = (sceneRef: RefObject<Scene | null>, getUpdatesByStep: () => number) => ({
     reset: () => void;
     addMagmacube: () => void;
     step: (direction: KeyPressedEnum) => void;
@@ -78,9 +78,13 @@ export const snakeBuilder: ISnakeBuilder = (sceneRef, getUpdatesByStep) => {
 
     return {
         reset: () => {
+            const scene = sceneRef.current;
+            if (!scene) {
+                return;
+            }
             mutableTailPosition.forEach((_, index) => {
                 setPosition(
-                    sceneRef.current,
+                    scene,
                     NAME.createMagmacubeName(index),
                     { x: 0, y: 0, angle: 0 },
                     true,
@@ -96,8 +100,12 @@ export const snakeBuilder: ISnakeBuilder = (sceneRef, getUpdatesByStep) => {
             mutableTailPosition.push({ ...lastTailItemPosition });
         },
         step: (keyPressed) => {
+            const scene = sceneRef.current;
+            if (!scene) {
+                return;
+            }
             const [newDuckyPosition, newTailPosition] = step(
-                sceneRef.current,
+                scene,
                 mutableDuckyPosition,
                 mutableTailPosition,
                 calculateDirection(keyPressed, mutableDuckyPosition.angle),
@@ -106,7 +114,13 @@ export const snakeBuilder: ISnakeBuilder = (sceneRef, getUpdatesByStep) => {
             mutableDuckyPosition = newDuckyPosition;
             mutableTailPosition = newTailPosition;
         },
-        microStep: () => microStep(sceneRef.current, mutableDuckyPosition, mutableTailPosition, getUpdatesByStep),
+        microStep: () => {
+            const scene = sceneRef.current;
+            if (!scene) {
+                return;
+            }
+            microStep(scene, mutableDuckyPosition, mutableTailPosition, getUpdatesByStep);
+        },
         getPositions: () => ({
             head: mutableDuckyPosition,
             tail: mutableTailPosition,

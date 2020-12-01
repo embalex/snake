@@ -2,7 +2,7 @@ import React, { Suspense, useRef } from 'react';
 import { Canvas } from 'react-three-fiber';
 import { PolarGridHelper } from 'react-three-fiber/components';
 import { Sky } from 'drei';
-import { Vector3 } from 'three';
+import { Scene } from 'three';
 
 import { Camera } from './camera';
 import { NAME } from './constants';
@@ -13,8 +13,8 @@ import { SceneHelperComponent } from './sceneHelper';
 import { Snake } from './Snake';
 
 
-export const App = () => {
-    const sceneRef = useRef(null);
+export const App: React.FC = () => {
+    const sceneRef = useRef<Scene>(null);
     useGameLogic(sceneRef);
 
     return (
@@ -25,7 +25,7 @@ export const App = () => {
                 rotation={[Math.PI / 2, 0, 0]}
             />
             <ambientLight name={NAME.AmbientLight} intensity={1} />
-            <Sky sunPosition={new Vector3(100, 10, 100)} />
+            <Sky />
             <Suspense fallback={null}>
                 <Ground />
                 <Snake />

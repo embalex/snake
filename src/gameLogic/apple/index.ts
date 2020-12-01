@@ -1,4 +1,4 @@
-import { MutableRefObject } from 'react';
+import { RefObject } from 'react';
 import { Scene } from 'three';
 
 import { DUCK_START_POSITION, NAME } from '../../constants';
@@ -33,7 +33,7 @@ export const step = (
 };
 
 
-type IAppleBuilder = (sceneRef: MutableRefObject<Scene>) => ({
+type IAppleBuilder = (sceneRef: RefObject<Scene | null>) => ({
     reset: () => void;
     step: (snakePosition: IPosition[]) => ({ isSnakeEatApple: boolean });
 });
@@ -46,7 +46,11 @@ export const appleBuilder: IAppleBuilder = (sceneRef) => {
             applePosition = calcRandomPositions([DUCK_START_POSITION]);
         },
         step: (snakePosition) => {
-            const { isSnakeEatApple, actualApplePosition } = step(sceneRef.current, applePosition, snakePosition);
+            const scene = sceneRef.current;
+            if (!scene) {
+                return { isSnakeEatApple: false };
+            }
+            const { isSnakeEatApple, actualApplePosition } = step(scene, applePosition, snakePosition);
 
             applePosition = actualApplePosition;
             return { isSnakeEatApple };

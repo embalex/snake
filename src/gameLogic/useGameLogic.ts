@@ -1,4 +1,4 @@
-import { MutableRefObject, useEffect } from 'react';
+import { RefObject, useEffect } from 'react';
 import { Scene } from 'three';
 
 import { UPDATES_SETTINGS } from '../constants';
@@ -26,7 +26,7 @@ import { useKeys } from './useKeys';
             180deg
 */
 
-export const useGameLogic = (sceneRef: MutableRefObject<Scene>): void => {
+export const useGameLogic = (sceneRef: RefObject<Scene | null>): void => {
     const { getPressedDirectionKey, isResetKeyPressed } = useKeys();
 
     useEffect(() => {
@@ -70,7 +70,7 @@ export const useGameLogic = (sceneRef: MutableRefObject<Scene>): void => {
         };
 
         const sceneTestTimer = setInterval(() => {
-            if (sceneHelperUtil.isSceneReady(sceneRef.current)) {
+            if (sceneRef.current && sceneHelperUtil.isSceneReady(sceneRef.current)) {
                 clearInterval(sceneTestTimer);
 
                 stopStepper = startGame();
