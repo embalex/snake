@@ -8,7 +8,7 @@ import { createEmptyAnimationConfig } from './utils';
 
 export const BigTree: React.FC<IModel> = ({ position, angle }) => {
     const treesModelScene = useModel(
-        '/models/bigTree/scene.gltf',
+        'models/bigTree/scene.gltf',
         createEmptyAnimationConfig(),
     );
 

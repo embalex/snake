@@ -8,7 +8,7 @@ import { createEmptyAnimationConfig } from './utils';
 
 export const Apple: React.FC = () => {
     const appleModelScene = useModel(
-        '/models/apple/scene.gltf',
+        'models/apple/scene.gltf',
         createEmptyAnimationConfig(),
     );
 

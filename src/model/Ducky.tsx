@@ -8,7 +8,7 @@ import { createAnimationConfig } from './utils';
 
 export const Ducky: React.FC<IModel> = ({ position, angle, name }) => {
     const duckyModelScene = useModel(
-        '/models/ducky/scene.gltf',
+        'models/ducky/scene.gltf',
         createAnimationConfig(0, 4),
     );
 
