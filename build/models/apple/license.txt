@@ -1,0 +1,11 @@
+Model Information:
+* title:	apple
+* source:	https://sketchfab.com/3d-models/apple-4007a1020b07460f9a6c68257b08ff68
+* author:	SherwinKumar (https://sketchfab.com/Sherwin.Kumar)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "apple" (https://sketchfab.com/3d-models/apple-4007a1020b07460f9a6c68257b08ff68) by SherwinKumar (https://sketchfab.com/Sherwin.Kumar) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
