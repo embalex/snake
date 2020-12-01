@@ -1,4 +1,4 @@
-import { RefObject, useEffect } from 'react';
+import { RefObject, useEffect, useState } from 'react';
 import { Scene } from 'three';
 
 import { UPDATES_SETTINGS } from '../constants';
@@ -10,24 +10,9 @@ import { stepperBuilder } from './stepper';
 import { useKeys } from './useKeys';
 
 
-// Here we use local (playground) coordinates. And in the end local coordinates is converted to global.
-
-/*
-        Playground:
- FIELD_SIZE (y)
- ^
- |
- |
- 0              --->   FIELD_SIZE (x)
-
-        Rotation
-            0 deg
-    90 deg         270 deg
-            180deg
-*/
-
-export const useGameLogic = (sceneRef: RefObject<Scene | null>): void => {
+export const useGameLogic = (sceneRef: RefObject<Scene | null>): { score: number } => {
     const { getPressedDirectionKey, isResetKeyPressed } = useKeys();
+    const [score, setScore] = useState(0);
 
     useEffect(() => {
         // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -48,12 +33,14 @@ export const useGameLogic = (sceneRef: RefObject<Scene | null>): void => {
                         if (game.isContinued()) {
                             const { isSnakeEatApple } = apple.step([snakePositions.head, ...snakePositions.tail]);
                             if (isSnakeEatApple) {
+                                setScore((value) => (value + 1));
                                 stepper.increaseSpeed();
                                 snake.addMagmacube();
                             }
                             snake.step(getPressedDirectionKey());
                         }
                         if (isResetKeyPressed()) {
+                            setScore(0);
                             stepper.reset();
                             snake.reset();
                             apple.reset();
@@ -80,4 +67,6 @@ export const useGameLogic = (sceneRef: RefObject<Scene | null>): void => {
         return stopStepper;
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    return { score };
 };

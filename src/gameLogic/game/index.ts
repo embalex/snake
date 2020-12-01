@@ -11,10 +11,10 @@ const initBlockedArea = (): () => IPlainPosition[] => {
     const blockedArea: IPlainPosition[] = [];
 
     new Array(BLOCKED_ZONE_SIZE).fill(0).forEach((_, index) => {
-        blockedArea.push({ x: BLOCKED_ZONE_SIZE / 2 - index, y: BLOCKED_ZONE_SIZE / 2 });
-        blockedArea.push({ x: BLOCKED_ZONE_SIZE / 2 - index, y: -BLOCKED_ZONE_SIZE / 2 });
-        blockedArea.push({ x: BLOCKED_ZONE_SIZE / 2, y: BLOCKED_ZONE_SIZE / 2 - index });
-        blockedArea.push({ x: -BLOCKED_ZONE_SIZE / 2, y: BLOCKED_ZONE_SIZE / 2 - index });
+        blockedArea.push({ x: -BLOCKED_ZONE_SIZE / 2 + index, y: BLOCKED_ZONE_SIZE / 2 });
+        blockedArea.push({ x: -BLOCKED_ZONE_SIZE / 2 + index, y: -BLOCKED_ZONE_SIZE / 2 });
+        blockedArea.push({ x: BLOCKED_ZONE_SIZE / 2, y: -BLOCKED_ZONE_SIZE / 2 + index });
+        blockedArea.push({ x: -BLOCKED_ZONE_SIZE / 2, y: -BLOCKED_ZONE_SIZE / 2 + index });
     });
 
     return () => blockedArea;
