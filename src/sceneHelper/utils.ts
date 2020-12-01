@@ -24,12 +24,17 @@ export const getObject3DPositionByName = (scene: Scene, name: string): IPosition
     };
 };
 
-export const setObject3DPositionByName = (scene: Scene, name: string, position: IPosition): void | never => {
+export const setObject3DPositionByName = (
+    scene: Scene,
+    name: string,
+    position: IPosition,
+    isUnderground: boolean,
+): void | never => {
     const object3D = getObject3DByName(scene, name);
 
     object3D.position.setX(position.x);
     object3D.position.setY(position.y);
-    object3D.position.setZ(0);
+    object3D.position.setZ(isUnderground ? -100 : 0);
     object3D.rotation.set(0, 0, position.angle);
 };
 

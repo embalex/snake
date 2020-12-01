@@ -44,11 +44,11 @@ export const isTheSameXYCoordinates = (
     { x: x2, y: y2 }: IPosition,
 ): boolean => (x1 === x2) && (y1 === y2);
 
-export const setPosition = (scene: Scene, name: string, position: IPosition): void => {
+export const setPosition = (scene: Scene, name: string, position: IPosition, isUnderGround = false): void => {
     const { x, y } = toGlobal({ x: position.x, y: position.y });
     const angle = degToRad(position.angle);
 
-    sceneHelperUtil.setObject3DPositionByName(scene, name, { x, y, angle });
+    sceneHelperUtil.setObject3DPositionByName(scene, name, { x, y, angle }, isUnderGround);
 };
 
 export const getPosition = (scene: Scene, name: string): IPosition => {
@@ -59,3 +59,13 @@ export const getPosition = (scene: Scene, name: string): IPosition => {
 
     return { x, y, angle };
 };
+
+type PlainPosition = Pick<IPosition, 'x'| 'y'>
+export const isPositionInBlocked = (
+    { x: testX, y: testY }: PlainPosition,
+    blockedPositions: PlainPosition[],
+): boolean => (
+    blockedPositions.filter(
+        ({ x: blockedX, y: blockedY }) => ((blockedX === testX) && (blockedY === testY)),
+    ).length > 0
+);

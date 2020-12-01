@@ -57,18 +57,40 @@ const microStep = (
     ));
 };
 
+const getInitialParameters = (): { initDuckyPosition: IPosition, initTailPosition: IPosition[]} => ({
+    initDuckyPosition: { ...DUCK_START_POSITION },
+    initTailPosition: [],
+});
+
 type ISnakeBuilder = (sceneRef: MutableRefObject<Scene>, getUpdatesByStep: () => number) => ({
+    reset: () => void;
     addMagmacube: () => void;
     step: (direction: KeyPressedEnum) => void;
     microStep: () => void;
-    getPositions: () => IPosition[];
+    getPositions: () => { head: IPosition; tail: IPosition[] };
 });
 
 export const snakeBuilder: ISnakeBuilder = (sceneRef, getUpdatesByStep) => {
-    let mutableDuckyPosition: IPosition = { ...DUCK_START_POSITION };
-    let mutableTailPosition: IPosition[] = [];
+    const { initDuckyPosition, initTailPosition } = getInitialParameters();
+
+    let mutableDuckyPosition: IPosition = initDuckyPosition;
+    let mutableTailPosition: IPosition[] = initTailPosition;
 
     return {
+        reset: () => {
+            mutableTailPosition.forEach((_, index) => {
+                setPosition(
+                    sceneRef.current,
+                    NAME.createMagmacubeName(index),
+                    { x: 0, y: 0, angle: 0 },
+                    true,
+                );
+            });
+            const { initDuckyPosition: ducky, initTailPosition: tail } = getInitialParameters();
+
+            mutableDuckyPosition = ducky;
+            mutableTailPosition = tail;
+        },
         addMagmacube: () => {
             const lastTailItemPosition = { ...mutableTailPosition[mutableTailPosition.length - 1] };
             mutableTailPosition.push({ ...lastTailItemPosition });
@@ -85,6 +107,9 @@ export const snakeBuilder: ISnakeBuilder = (sceneRef, getUpdatesByStep) => {
             mutableTailPosition = newTailPosition;
         },
         microStep: () => microStep(sceneRef.current, mutableDuckyPosition, mutableTailPosition, getUpdatesByStep),
-        getPositions: () => [mutableDuckyPosition, ...mutableTailPosition],
+        getPositions: () => ({
+            head: mutableDuckyPosition,
+            tail: mutableTailPosition,
+        }),
     };
 };

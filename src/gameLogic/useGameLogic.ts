@@ -1,11 +1,10 @@
 import { MutableRefObject, useEffect } from 'react';
 import { Scene } from 'three';
 
-import {
-    UPDATES_SETTINGS,
-} from '../constants';
+import { UPDATES_SETTINGS } from '../constants';
 import { sceneHelperUtil } from '../sceneHelper';
 import { appleBuilder } from './apple';
+import { gameBuilder } from './game';
 import { snakeBuilder } from './snake';
 import { stepperBuilder } from './stepper';
 import { useKeys } from './useKeys';
@@ -28,7 +27,7 @@ import { useKeys } from './useKeys';
 */
 
 export const useGameLogic = (sceneRef: MutableRefObject<Scene>): void => {
-    const { getPressedKey } = useKeys();
+    const { getPressedDirectionKey, isResetKeyPressed } = useKeys();
 
     useEffect(() => {
         // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -38,23 +37,34 @@ export const useGameLogic = (sceneRef: MutableRefObject<Scene>): void => {
             const stepper = stepperBuilder(UPDATES_SETTINGS.startIntervalMs, UPDATES_SETTINGS.intervalDecrease);
             const snake = snakeBuilder(sceneRef, stepper.getUpdatesByStep);
             const apple = appleBuilder(sceneRef);
+            const game = gameBuilder(sceneRef);
 
             const makeStep = () => {
                 stepper.step(
-                    snake.microStep,
+                    () => game.isContinued() && snake.microStep(),
                     () => {
-                        const { isSnakeEatApple } = apple.step(snake.getPositions());
-                        if (isSnakeEatApple) {
-                            stepper.increaseSpeed();
-                            snake.addMagmacube();
+                        const snakePositions = snake.getPositions();
+                        game.step(snakePositions.head, snakePositions.tail);
+                        if (game.isContinued()) {
+                            const { isSnakeEatApple } = apple.step([snakePositions.head, ...snakePositions.tail]);
+                            if (isSnakeEatApple) {
+                                stepper.increaseSpeed();
+                                snake.addMagmacube();
+                            }
+                            snake.step(getPressedDirectionKey());
                         }
-                        snake.step(getPressedKey());
+                        if (isResetKeyPressed()) {
+                            stepper.reset();
+                            snake.reset();
+                            apple.reset();
+                            game.start();
+                        }
                         makeStep();
                     },
                 );
             };
 
-            snake.step(getPressedKey());
+            snake.step(getPressedDirectionKey());
             makeStep();
             return stepper.stop;
         };

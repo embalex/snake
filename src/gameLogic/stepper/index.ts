@@ -50,7 +50,16 @@ const increaseSpeed = (
     stepperMutableParameters.timerInterval = timerInterval;
 };
 
+const getInitialParameters = (initialInterval: number, intervalDecreaseValue: number): IStepperParameters => ({
+    stepInterval: initialInterval,
+    stepIntervalDecreaseValue: intervalDecreaseValue,
+    timerId: null,
+    updatesByStepCounter: 0,
+    ...calculateUpdatesParameters(initialInterval),
+});
+
 type IStepperBuilder = (initialInterval: number, intervalDecreaseValue: number) => ({
+    reset: () => void;
     stop: () => void;
     step: (onTick: () => void, onComplete: () => void) => void;
     increaseSpeed: () => void;
@@ -58,15 +67,13 @@ type IStepperBuilder = (initialInterval: number, intervalDecreaseValue: number) 
 });
 
 export const stepperBuilder: IStepperBuilder = (initialInterval: number, intervalDecreaseValue: number) => {
-    const stepperMutableParameters: IStepperParameters = {
-        stepInterval: initialInterval,
-        stepIntervalDecreaseValue: intervalDecreaseValue,
-        timerId: null,
-        updatesByStepCounter: 0,
-        ...calculateUpdatesParameters(initialInterval),
-    };
+    let stepperMutableParameters: IStepperParameters = getInitialParameters(initialInterval, intervalDecreaseValue);
 
     return {
+        reset: () => {
+            stopStepTimer(stepperMutableParameters);
+            stepperMutableParameters = getInitialParameters(initialInterval, intervalDecreaseValue);
+        },
         stop: () => {
             stopStepTimer(stepperMutableParameters);
         },

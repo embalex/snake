@@ -5,6 +5,7 @@ import { Sky } from 'drei';
 import { Vector3 } from 'three';
 
 import { Camera } from './camera';
+import { NAME } from './constants';
 import { useGameLogic } from './gameLogic';
 import { Ground } from './Ground';
 import { Model } from './model';
@@ -23,7 +24,7 @@ export const App = () => {
                 args={[200, 16, 16, 64, 0x333333, 0x333333]}
                 rotation={[Math.PI / 2, 0, 0]}
             />
-            <ambientLight intensity={1} />
+            <ambientLight name={NAME.AmbientLight} intensity={1} />
             <Sky sunPosition={new Vector3(100, 10, 100)} />
             <Suspense fallback={null}>
                 <Ground />

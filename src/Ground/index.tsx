@@ -2,12 +2,11 @@ import React, { useEffect, useMemo } from 'react';
 import { useLoader } from 'react-three-fiber';
 import { RepeatWrapping, TextureLoader } from 'three';
 
-import { FIELD_SIZE } from '../constants';
+import { FIELD_SIZE, PLANET_SIZE } from '../constants';
 import { Model } from '../model';
 import { getBushesPositions, getRandomPositions } from './utils';
 
 
-const PLANET_SIZE = 50 * FIELD_SIZE;
 const PALMS_AMOUNT = 60;
 const BIG_TREES_AMOUNT = 60;
 const BUSHES_AMOUNT = 1000;

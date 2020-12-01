@@ -34,6 +34,7 @@ export const step = (
 
 
 type IAppleBuilder = (sceneRef: MutableRefObject<Scene>) => ({
+    reset: () => void;
     step: (snakePosition: IPosition[]) => ({ isSnakeEatApple: boolean });
 });
 
@@ -41,6 +42,9 @@ export const appleBuilder: IAppleBuilder = (sceneRef) => {
     let applePosition: IPosition = calcRandomPositions([DUCK_START_POSITION]);
 
     return {
+        reset: () => {
+            applePosition = calcRandomPositions([DUCK_START_POSITION]);
+        },
         step: (snakePosition) => {
             const { isSnakeEatApple, actualApplePosition } = step(sceneRef.current, applePosition, snakePosition);
 

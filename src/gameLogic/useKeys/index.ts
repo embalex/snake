@@ -1,22 +1,25 @@
 import { useEffect, useRef } from 'react';
 
-import { KeyPressedEnum } from './types';
-import { getKeyPressed } from './utils';
+import { DirectionKeyPressedEnum, KeyPressedEnum } from './types';
+import { getDirectionKeyPressed, isResetKeyPressed } from './utils';
 
 
 export const useKeys = () => {
-    const keyPressedRef = useRef<KeyPressedEnum>(KeyPressedEnum.None);
+    const keyPressedRef = useRef<DirectionKeyPressedEnum | undefined>(undefined);
+    const keyResetRef = useRef<boolean>(false);
 
     useEffect(() => {
         const onKeyPress = (event: KeyboardEvent) => {
-            const key = getKeyPressed(event.key);
+            const directionKey = getDirectionKeyPressed(event.key);
+            const isResetKey = isResetKeyPressed(event.key);
 
-            if (key === undefined) {
-                keyPressedRef.current = KeyPressedEnum.None;
-                return;
+            if (directionKey !== undefined) {
+                keyPressedRef.current = directionKey;
             }
 
-            keyPressedRef.current = key;
+            if (isResetKey) {
+                keyResetRef.current = true;
+            }
         };
 
         document.addEventListener('keydown', onKeyPress);
@@ -25,11 +28,22 @@ export const useKeys = () => {
     }, []);
 
     return {
-        getPressedKey: (): KeyPressedEnum => {
+        getPressedDirectionKey: (): KeyPressedEnum => {
             const key = keyPressedRef.current;
-            keyPressedRef.current = KeyPressedEnum.None;
+            keyPressedRef.current = undefined;
 
-            return key;
+            const map = {
+                [DirectionKeyPressedEnum.LeftArrow]: KeyPressedEnum.LeftArrow,
+                [DirectionKeyPressedEnum.RightArrow]: KeyPressedEnum.RightArrow,
+            };
+
+            return key === undefined ? KeyPressedEnum.None : map[key];
+        },
+        isResetKeyPressed: () => {
+            const isPressed = keyResetRef.current;
+            keyResetRef.current = false;
+
+            return isPressed;
         },
     };
 };

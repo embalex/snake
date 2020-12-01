@@ -1,3 +1,7 @@
 export enum KeyPressedEnum {
-    LeftArrow, RightArrow, None
+    LeftArrow, RightArrow, None,
+}
+
+export enum DirectionKeyPressedEnum {
+    LeftArrow, RightArrow
 }
