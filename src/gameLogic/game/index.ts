@@ -1,7 +1,7 @@
 import { RefObject } from 'react';
 import { AmbientLight, Scene } from 'three';
 
-import { BLOCKED_ZONE_SIZE, NAME } from '../../constants';
+import { BLOCKED_ZONE_SIZE, FIELD_SIZE, NAME } from '../../constants';
 import { sceneHelperUtil } from '../../sceneHelper';
 import { isPositionInBlocked } from '../utils';
 import { IPlainPosition } from './types';
@@ -9,12 +9,15 @@ import { IPlainPosition } from './types';
 
 const initBlockedArea = (): () => IPlainPosition[] => {
     const blockedArea: IPlainPosition[] = [];
+    const centerOfArea = FIELD_SIZE / 2;
 
     new Array(BLOCKED_ZONE_SIZE).fill(0).forEach((_, index) => {
-        blockedArea.push({ x: -BLOCKED_ZONE_SIZE / 2 + index, y: BLOCKED_ZONE_SIZE / 2 });
-        blockedArea.push({ x: -BLOCKED_ZONE_SIZE / 2 + index, y: -BLOCKED_ZONE_SIZE / 2 });
-        blockedArea.push({ x: BLOCKED_ZONE_SIZE / 2, y: -BLOCKED_ZONE_SIZE / 2 + index });
-        blockedArea.push({ x: -BLOCKED_ZONE_SIZE / 2, y: -BLOCKED_ZONE_SIZE / 2 + index });
+        const changingCoordinate = centerOfArea - BLOCKED_ZONE_SIZE / 2 + index;
+
+        blockedArea.push({ x: changingCoordinate, y: centerOfArea + BLOCKED_ZONE_SIZE / 2 });
+        blockedArea.push({ x: changingCoordinate, y: centerOfArea - BLOCKED_ZONE_SIZE / 2 });
+        blockedArea.push({ x: centerOfArea + BLOCKED_ZONE_SIZE / 2, y: changingCoordinate });
+        blockedArea.push({ x: centerOfArea - BLOCKED_ZONE_SIZE / 2, y: changingCoordinate });
     });
 
     return () => blockedArea;
