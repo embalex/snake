@@ -8,7 +8,7 @@ import { createEmptyAnimationConfig } from './utils';
 
 export const PalmTree: React.FC<IModel> = ({ position, angle }) => {
     const treesModelScene = useModel(
-        '/models/palmTree/scene.gltf',
+        'models/palmTree/scene.gltf',
         createEmptyAnimationConfig(),
     );
 

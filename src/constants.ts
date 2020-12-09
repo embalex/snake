@@ -4,7 +4,7 @@ import { IPosition } from './types';
 const HALF_FIELD_SIZE = 10;
 export const FIELD_SIZE = HALF_FIELD_SIZE * 2;
 export const PLANET_SIZE = 50 * FIELD_SIZE;
-export const BLOCKED_ZONE_SIZE = 2 * FIELD_SIZE;
+export const BLOCKED_ZONE_SIZE = 4 * FIELD_SIZE;
 export const DUCK_START_POSITION: IPosition = {
     x: HALF_FIELD_SIZE,
     y: HALF_FIELD_SIZE,

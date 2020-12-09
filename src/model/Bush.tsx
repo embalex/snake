@@ -8,7 +8,7 @@ import { createEmptyAnimationConfig } from './utils';
 
 export const Bush: React.FC<IModel> = ({ position, angle }) => {
     const treesModelScene = useModel(
-        '/models/bush/scene.gltf',
+        'models/bush/scene.gltf',
         createEmptyAnimationConfig(),
     );
 

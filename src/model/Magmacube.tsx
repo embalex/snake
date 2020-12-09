@@ -14,7 +14,7 @@ interface IProps {
 const CUBE_ANIMATION_BASE_TIME_S = 0.1;
 export const Magmacube: React.FC<IProps> = ({ cubeNumber = 0, name }) => {
     const magmacubeModelScene = useModel(
-        '/models/magmacube/scene.gltf',
+        'models/magmacube/scene.gltf',
         createAnimationConfig(0, 1, cubeNumber * CUBE_ANIMATION_BASE_TIME_S),
     );
 
