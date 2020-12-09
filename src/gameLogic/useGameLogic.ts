@@ -10,9 +10,11 @@ import { stepperBuilder } from './stepper';
 import { useKeys } from './useKeys';
 
 
-export const useGameLogic = (sceneRef: RefObject<Scene | null>): { score: number } => {
+export const useGameLogic = (sceneRef: RefObject<Scene | null>): { score: number; isLoading: boolean; } => {
     const { getPressedDirectionKey, isResetKeyPressed } = useKeys();
     const [score, setScore] = useState(0);
+    const [isLoading, setIsLoading] = useState(true);
+
 
     useEffect(() => {
         // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -59,6 +61,7 @@ export const useGameLogic = (sceneRef: RefObject<Scene | null>): { score: number
         const sceneTestTimer = setInterval(() => {
             if (sceneRef.current && sceneHelperUtil.isSceneReady(sceneRef.current)) {
                 clearInterval(sceneTestTimer);
+                setIsLoading(false);
 
                 stopStepper = startGame();
             }
@@ -68,5 +71,5 @@ export const useGameLogic = (sceneRef: RefObject<Scene | null>): { score: number
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    return { score };
+    return { score, isLoading };
 };
